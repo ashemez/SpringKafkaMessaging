@@ -40,8 +40,15 @@ public class AuthController {
     	
     	// save the activation code to the cache repository (cached auth token)
     	cacheRepository.putActivationCode(activationRequest.getMobile(), String.valueOf(code));
-    	
-    	return null;
+
+    	ActivationResponse activationResponse = ActivationResponse.builder()
+                .mobile(activationRequest.getMobile())
+                .activationCode(String.valueOf(code))
+                .build();
+
+        return new ResponseEntity<>(
+                activationResponse,
+                HttpStatus.OK);
     }
     
     @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

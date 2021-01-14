@@ -17,9 +17,6 @@ public class MessageSender {
 
     public void send(String topic, String message){
 
-
-        JSONObject jsonObject = new JSONObject(message);
-        jsonObject.append("", "");
         kafkaTemplate.send(topic, message);
     }
 }
