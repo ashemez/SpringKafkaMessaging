@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public class MessageServiceImpl implements MessageService{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MessageServiceImpl.class);
 
     @Autowired
     MessageRepository messageRepository;
@@ -33,7 +33,7 @@ public class MessageServiceImpl implements MessageService{
     MessageHandler messageHandler;
 
     @Override
-    public void sendMessage(String accessToken, Long sendTo, String msg) {
+    public void sendMessage(String accessToken, Long sendTo, String msg, String topic) {
 
         Long senderUserId = 0L;
         String senderId = cacheRepository.getUserIdByAccessToken(accessToken);
@@ -47,16 +47,19 @@ public class MessageServiceImpl implements MessageService{
             senderUserId = Long.valueOf(senderId);
         }
         if (senderUserId == 0L) {
+            LOG.info("Invalid sender " + senderUserId);
             return;
         }
 
         try {
-            // enrich message with senderId
+            // enrich message with senderId and topic
             JSONObject msgJson = new JSONObject();
             msgJson.put("msg", msg);
             msgJson.put("senderId", senderUserId);
+            msgJson.put("topic", topic);
             messageHandler.sendMessageToUser(sendTo, msgJson.toString());
         } catch (IOException e) {
+            e.printStackTrace();
             return;
         }
     }

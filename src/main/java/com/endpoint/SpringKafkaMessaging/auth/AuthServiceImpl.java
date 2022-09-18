@@ -51,4 +51,15 @@ public class AuthServiceImpl implements AuthService {
         }
     	return Long.valueOf(userIdStr);
     }
+
+    @Override
+    public AccessToken getAccesToken(Long userId) {
+        return accessTokenRepository.findByUserId(userId);
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+
+    }
+
 }

@@ -2,6 +2,10 @@ package com.endpoint.SpringKafkaMessaging.auth.controller;
 
 import javax.validation.Valid;
 
+import com.endpoint.SpringKafkaMessaging.message.MessageServiceImpl;
+import com.endpoint.SpringKafkaMessaging.message.dto.request.SendMessageRequest;
+import com.endpoint.SpringKafkaMessaging.message.dto.response.SendMessageResponse;
+import com.endpoint.SpringKafkaMessaging.persistent.model.AccessToken;
 import com.endpoint.SpringKafkaMessaging.persistent.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +21,7 @@ import com.endpoint.SpringKafkaMessaging.cache.respository.CacheRepository;
 import com.endpoint.SpringKafkaMessaging.persistent.repository.UserRepository;
 import com.endpoint.SpringKafkaMessaging.util.StringHelper;
 
+import java.util.Calendar;
 import java.util.UUID;
 
 
@@ -66,18 +71,29 @@ public class AuthController {
                 // save user in persistence
                 userRepository.save(
                         User.builder()
-                        .mobile(loginRequest.getMobile())
-                        .build()
+                                .mobile(loginRequest.getMobile())
+                                .fname(loginRequest.getMobile())
+                                .lname(loginRequest.getMobile())
+                                .createdAt(Calendar.getInstance().getTime())
+                                .build()
                 );
                 user = userRepository.findByMobile(loginRequest.getMobile());
             }
+
             userId = user.getUserId();
-            String accessToken = UUID.randomUUID().toString();
-            authService.putAccessToken(accessToken, userId);
+            AccessToken accessToken = authService.getAccesToken(userId);
+
+            String token = "";
+            if (accessToken == null) {
+                token = UUID.randomUUID().toString();
+                authService.putAccessToken(token, userId);
+            } else {
+                token = accessToken.getToken();
+            }
 
             return new ResponseEntity<>(
                     LoginResponse.builder()
-                            .accessToken(accessToken)
+                            .accessToken(token)
                             .build(),
                     HttpStatus.OK);
         }

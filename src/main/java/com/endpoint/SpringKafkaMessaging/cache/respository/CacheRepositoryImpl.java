@@ -59,5 +59,16 @@ public class CacheRepositoryImpl implements CacheRepository {
 
         return null;
     }
+
+    @Override
+    public void deleteAny(String key) {
+        try (Jedis jedis = JedisFactory.getConnection()) {
+            jedis.del(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
 

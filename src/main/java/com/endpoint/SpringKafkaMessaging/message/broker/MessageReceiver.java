@@ -3,6 +3,7 @@ package com.endpoint.SpringKafkaMessaging.message.broker;
 import com.endpoint.SpringKafkaMessaging.message.MessageService;
 import com.endpoint.SpringKafkaMessaging.websocket.MessageHandler;
 import com.endpoint.SpringKafkaMessaging.websocket.WebSocketPool;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,19 +25,26 @@ public class MessageReceiver {
     @Autowired
     MessageHandler messageHandler;
 
-    @KafkaListener(topics = "SEND_MESSAGE")
+    @KafkaListener(topics = "SEND_MESSAGE", groupId = "foo")
     public void messagesSendToUser(@Payload String message, @Headers MessageHeaders headers) {
 
         JSONObject jsonObject = new JSONObject(message);
 
-        if (WebSocketPool.websockets.get(jsonObject.getString("sendTo")) != null) {
+        LOG.info("Websocket message will be sent if corresponding destination websocket session is found");
+        if (jsonObject.get("sendTo") != null && WebSocketPool.websockets.get(jsonObject.getLong("sendTo")) != null) {
 
             String accessToken = jsonObject.getString("accessToken");
             Long sendTo = Long.parseLong(jsonObject.getString("sendTo"));
             String msg = jsonObject.getString("msg");
 
-            messageService.sendMessage(accessToken, sendTo, msg);
+            LOG.info("Websocket message is sent to " + sendTo);
 
+            String topic = "SEND_MESSAGE";
+
+            messageService.sendMessage(accessToken, sendTo, msg, topic);
+
+        } else {
+            LOG.info("Websocket session not found for given sendTo");
         }
     }
 

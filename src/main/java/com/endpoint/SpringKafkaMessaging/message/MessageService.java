@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MessageService {
 
-    public void sendMessage(String accessToken, Long sendTo, String msg);
+    public void sendMessage(String accessToken, Long sendTo, String msg, String topic);
 
     List<Message> getMessageHistory(Long fromUserId, Long toUserId);
 }

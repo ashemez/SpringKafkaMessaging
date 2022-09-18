@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Contact implements Serializable {
 	
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="contact_id")
     private Long contactId;
     
@@ -37,6 +37,6 @@ public class Contact implements Serializable {
     private Long contactUserId;
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     private User user;
 }

@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id")
     private Long userId;
 
@@ -44,7 +44,7 @@ public class User implements Serializable {
     @Column(name="created_at")
     private Date createdAt;
     
-    @OneToMany(mappedBy = "User", fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL)
     private Set<Contact> contacts;
 

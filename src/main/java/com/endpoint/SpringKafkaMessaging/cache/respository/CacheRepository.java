@@ -9,5 +9,7 @@ public interface CacheRepository {
     void putActivationCode(String mobile, String activationCode);
     
     String queryMobileActivationCode(String mobile, String activationCode);
+
+    void deleteAny(String key);
 }
 

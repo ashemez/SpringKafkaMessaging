@@ -1,5 +1,8 @@
 package com.endpoint.SpringKafkaMessaging.websocket;
 
+import com.endpoint.SpringKafkaMessaging.message.broker.MessageReceiver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -10,6 +13,8 @@ import java.util.Set;
 
 @Service
 public class MessageHandlerImpl implements MessageHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MessageReceiver.class);
 
     @Override
     public void addSessionToPool(Long userId, WebSocketSession session) {
@@ -33,11 +38,13 @@ public class MessageHandlerImpl implements MessageHandler {
         Set<WebSocketSession> userSessions = WebSocketPool.websockets.get(userId);
 
         if (userSessions == null) {
+            LOG.info("No websocket sessions found for given destination userID");
             return;
         }
 
         TextMessage textMessage = new TextMessage(message);
         for (WebSocketSession session : userSessions) {
+            LOG.info("Sending websocket message " + textMessage.getPayload());
             session.sendMessage(textMessage);
         }
 
