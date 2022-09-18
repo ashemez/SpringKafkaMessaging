@@ -34,7 +34,7 @@ public class MessageReceiver {
         if (jsonObject.get("sendTo") != null && WebSocketPool.websockets.get(jsonObject.getLong("sendTo")) != null) {
 
             String accessToken = jsonObject.getString("accessToken");
-            Long sendTo = Long.parseLong(jsonObject.getString("sendTo"));
+            Long sendTo = jsonObject.getLong("sendTo");
             String msg = jsonObject.getString("msg");
 
             LOG.info("Websocket message is sent to " + sendTo);

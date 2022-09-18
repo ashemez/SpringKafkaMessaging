@@ -44,5 +44,4 @@ public class MessageController {
                 HttpStatus.OK);
     }
 
-
 }

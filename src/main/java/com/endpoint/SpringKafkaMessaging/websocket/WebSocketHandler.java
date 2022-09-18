@@ -1,10 +1,13 @@
 package com.endpoint.SpringKafkaMessaging.websocket;
 
 import com.endpoint.SpringKafkaMessaging.cache.respository.CacheRepository;
+import com.endpoint.SpringKafkaMessaging.message.broker.MessageReceiver;
 import com.endpoint.SpringKafkaMessaging.message.broker.MessageSender;
 import com.endpoint.SpringKafkaMessaging.persistent.model.User;
 import com.endpoint.SpringKafkaMessaging.persistent.repository.UserRepository;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -14,6 +17,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
 public class WebSocketHandler extends TextWebSocketHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketHandler.class);
 
     @Autowired
     CacheRepository cacheRepository;
@@ -57,6 +62,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         String parameters[] = session.getUri().getQuery().split("=");
 
+        LOG.info("Websocket connection requested.");
         if(parameters.length == 2 && parameters[0].equals("accessToken")) {
             String accessToken = parameters[1];
 
@@ -71,13 +77,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
             } else {
                 senderUserId = Long.valueOf(senderId);
             }
+
+            LOG.info("Websocket connected, userId: " + senderUserId);
+
             if (senderUserId == 0L) {
+                LOG.info("Websocket connection: user not found for given accessToken");
                 return;
             }
 
             messageHandler.addSessionToPool(senderUserId, session);
         }
         else {
+            LOG.info("Websocket connection: accessToken not provided");
             session.close();
         }
 
@@ -90,6 +101,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws Exception {
 
         JSONObject jsonObject = new JSONObject(textMessage.getPayload());
+        LOG.info(textMessage.getPayload());
         String topic = jsonObject.getString("topic");
 
         // only SEND_MESSAGE topic is available
