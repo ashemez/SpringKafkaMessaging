@@ -12,5 +12,7 @@ curl -H "Content-Type: application/json" -X POST localhost:8080/api/auth/login -
 curl -H "Content-Type: application/json" -X POST localhost:8080/api/message/send-message -d '{ "accessToken": "5eab27f8-8748-4fdc-a4de-ac782ce17a74", "sendTo": 5, "msg": "test message" }'
 
 
-Websocket example will be added.
+Websocket web UI example is now available.
+
+![Messaging example web UI](https://github.com/ashemez/SpringKafkaMessaging/blob/master/kafkamessagewebui.png)
 
