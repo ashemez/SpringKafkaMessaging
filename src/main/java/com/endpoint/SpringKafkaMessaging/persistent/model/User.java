@@ -2,17 +2,10 @@ package com.endpoint.SpringKafkaMessaging.persistent.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,9 +36,11 @@ public class User implements Serializable {
     
     @Column(name="created_at")
     private Date createdAt;
-    
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL)
-    private Set<Contact> contacts;
 
+    @ManyToMany
+    @JoinTable(
+            name = "contacts",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "contact_id"))
+    private List<Contact> contacts;
 }

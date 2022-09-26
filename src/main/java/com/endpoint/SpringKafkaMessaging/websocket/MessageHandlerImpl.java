@@ -55,9 +55,13 @@ public class MessageHandlerImpl implements MessageHandler {
         Set<WebSocketSession> userSessions = WebSocketPool.websockets.get(userId);
 
         if (userSessions != null) {
+            LOG.info("Sessions found for userId " + userId);
             for (WebSocketSession sessionItem : userSessions) {
                 if (sessionItem.equals(session)) {
+                    LOG.info("Removing ession for userId " + sessionItem.hashCode());
                     userSessions.remove(session);
+                } else {
+                    LOG.info("This session is not equal hmm: " + sessionItem.hashCode() + " <> " + session.hashCode());
                 }
             }
         }

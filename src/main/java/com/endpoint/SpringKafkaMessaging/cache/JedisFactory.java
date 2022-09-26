@@ -19,45 +19,29 @@ public class JedisFactory {
     private static Integer timeout = 5000;
 
     @Value("${cache.redis.password}")
-    private static String password = "";
+    private static String password = "1234";
 
     // hide the constructor
     private JedisFactory() {
 
     }
 
-    private static JedisPoolConfig buildPoolConfig() {
-        final JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(128);
-        poolConfig.setMaxIdle(128);
-        poolConfig.setMinIdle(16);
-        poolConfig.setTestOnBorrow(true);
-        poolConfig.setTestOnReturn(true);
-        poolConfig.setTestWhileIdle(true);
-        poolConfig.setMinEvictableIdleTimeMillis(Duration.ofSeconds(60).toMillis());
-        poolConfig.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(30).toMillis());
-        poolConfig.setNumTestsPerEvictionRun(3);
-        poolConfig.setBlockWhenExhausted(true);
-        return poolConfig;
-    }
-
     private static JedisPool jedisPool;
 
     static {
-        final JedisPoolConfig poolConfig = buildPoolConfig();
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxTotal(128);
 
         jedisPool = new JedisPool(
-            poolConfig,
-            host
+                poolConfig,
+                host,
+                port,
+                timeout,
+                password
         );
     }
 
     public static Jedis getConnection() {
-        try {
-            return jedisPool.getResource();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return jedisPool.getResource();
     }
 }

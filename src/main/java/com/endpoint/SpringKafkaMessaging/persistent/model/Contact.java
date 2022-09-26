@@ -1,16 +1,9 @@
 package com.endpoint.SpringKafkaMessaging.persistent.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,8 +28,9 @@ public class Contact implements Serializable {
 
     @Column(name="contact_user_id")
     private Long contactUserId;
-    
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "contact_user_id", nullable = false, insertable = false, updatable = false, referencedColumnName = "user_id")
     private User user;
+
 }

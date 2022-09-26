@@ -22,7 +22,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
 	
 	User findByLname(String lname);
 
-	@Query("SELECT u FROM User u, AccessToken t WHERE u.userId=t.userId AND t.token = :#{#token}")
+	@Query("SELECT u FROM User u, AccessToken t WHERE u.userId=t.userId AND t.token = :token")
 	User findByToken(@Param("token") String token);
 
 	void deleteById(Long userId);

@@ -11,18 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.endpoint.SpringKafkaMessaging.auth.AuthService;
 import com.endpoint.SpringKafkaMessaging.cache.respository.CacheRepository;
 import com.endpoint.SpringKafkaMessaging.persistent.repository.UserRepository;
 import com.endpoint.SpringKafkaMessaging.util.StringHelper;
 
-import java.util.Calendar;
-import java.util.UUID;
+import java.util.*;
 
 
 @RestController
@@ -37,7 +33,7 @@ public class AuthController {
 
     @Autowired
     CacheRepository cacheRepository;
-    
+
     @RequestMapping(value = "/getcode", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Object> getCode(@Valid @RequestBody ActivationRequest activationRequest) {
     	
@@ -55,7 +51,8 @@ public class AuthController {
                 activationResponse,
                 HttpStatus.OK);
     }
-    
+
+    @CrossOrigin
     @RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
         String mobile = cacheRepository.queryMobileActivationCode(loginRequest.getMobile(), loginRequest.getActivationCode());
@@ -97,6 +94,23 @@ public class AuthController {
                             .build(),
                     HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(value = "/getcontacts", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Object> getContacts(@Valid @RequestBody ContactRequest activationRequest) {
+
+        int code = StringHelper.generateRandomNumber(6);
+
+        // save the activation code to the cache repository (cached auth token)
+        User user = userRepository.findByToken(activationRequest.getAccessToken());
+
+        ContactResponse contactResponse = ContactResponse.builder()
+                .contacts(user.getContacts())
+                .build();
+
+        return new ResponseEntity<>(
+                contactResponse,
+                HttpStatus.OK);
     }
 
 }

@@ -31,7 +31,9 @@ public class MessageReceiver {
         JSONObject jsonObject = new JSONObject(message);
 
         LOG.info("Websocket message will be sent if corresponding destination websocket session is found");
-        if (jsonObject.get("sendTo") != null && WebSocketPool.websockets.get(jsonObject.getLong("sendTo")) != null) {
+        if (jsonObject.get("sendTo") != null
+                && WebSocketPool.websockets.get(jsonObject.getLong("sendTo")) != null
+                && WebSocketPool.websockets.get(jsonObject.getLong("sendTo")).size() > 0) {
 
             String accessToken = jsonObject.getString("accessToken");
             Long sendTo = jsonObject.getLong("sendTo");

@@ -34,6 +34,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         String parameters[] = session.getUri().getQuery().split("=");
 
+        LOG.info("ws session url  " + session.getUri().getPath() + " ? " + session.getUri().getQuery());
+
         if(parameters.length == 2 && parameters[0].equals("accessToken")) {
             String accessToken = parameters[1];
 
@@ -48,6 +50,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             } else {
                 senderUserId = Long.valueOf(senderId);
             }
+
+            LOG.info("Websocket connected, userId: " + senderUserId + " -- " + senderId);
+
             if (senderUserId == 0L) {
                 return;
             }
@@ -103,12 +108,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
         JSONObject jsonObject = new JSONObject(textMessage.getPayload());
         LOG.info(textMessage.getPayload());
         String topic = jsonObject.getString("topic");
+        JSONObject message = jsonObject.getJSONObject("message");
 
         // only SEND_MESSAGE topic is available
         if(topic == null && !topic.equals("SEND_MESSAGE")) {
             return;
         }
 
-        sender.send(topic, textMessage.getPayload());
+        sender.send(topic, message.toString());
     }
 }
